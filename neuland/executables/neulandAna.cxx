@@ -47,7 +47,7 @@ auto main(int argc, const char** argv) -> int
     auto channelName =
         programOptions.Create_Option<std::string>("channel", R"(set the channel name. e.g. "tamex")", "tacquila");
     auto simuFileNames = programOptions.Create_Option<std::string>(
-        "simu", "set colon separated filenames of simulation input", "simu.root");
+        "simu", "set semicolon separated filenames of simulation input", "simu.root");
     auto paraFileName =
         programOptions.Create_Option<std::string>("parIn", "set the filename of parameter sink", "para.root");
     auto paraFileName2 =
