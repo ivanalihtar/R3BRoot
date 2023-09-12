@@ -11,9 +11,13 @@
 #include "R3BFileSource2.h"
 #include "R3BNeulandDigitizer.h"
 #include "R3BNeulandHitMon.h"
+#include "R3BNeulandPrimaryInteractionFinder.h"
 #include "R3BProgramOptions.h"
 #include "TRandom3.h"
 #include "TStopwatch.h"
+#include <R3BNeulandClusterFinder.h>
+#include <R3BNeulandMultiplicityCalorimetricTrain.h>
+#include <R3BNeulandPrimaryClusterFinder.h>
 #include <TObjString.h>
 #include <boost/program_options.hpp>
 
@@ -42,12 +46,14 @@ auto main(int argc, const char** argv) -> int
         programOptions.Create_Option<std::string>("paddle", R"(set the paddle name. e.g. "neuland")", "neuland");
     auto channelName =
         programOptions.Create_Option<std::string>("channel", R"(set the channel name. e.g. "tamex")", "tacquila");
-    auto simuFileName =
-        programOptions.Create_Option<std::string>("simuFile", "set the filename of simulation input", "simu.root");
+    auto simuFileNames = programOptions.Create_Option<std::string>(
+        "simu", "set colon separated filenames of simulation input", "simu.root");
     auto paraFileName =
-        programOptions.Create_Option<std::string>("paraFile", "set the filename of parameter sink", "para.root");
+        programOptions.Create_Option<std::string>("parIn", "set the filename of parameter sink", "para.root");
     auto paraFileName2 =
-        programOptions.Create_Option<std::string>("paraFile2", "set the filename of the second parameter sink", "");
+        programOptions.Create_Option<std::string>("parIn2", "set the filename of the second parameter sink", "");
+    auto parOut = programOptions.Create_Option<std::string>(
+        "parOut", "set the filename of the parameter output", "trainPar.root");
     auto digiFileName =
         programOptions.Create_Option<std::string>("digiFile", "set the filename of digitization output", "digi.root");
     auto logLevel = programOptions.Create_Option<std::string>("logLevel,v", "set log level of fairlog", "error");
@@ -102,8 +108,19 @@ auto main(int argc, const char** argv) -> int
 
     FairLogger::GetLogger()->SetLogScreenLevel(logLevel->value().c_str());
 
+    // ===================================================================
+    // FairRun setup
     auto run = std::make_unique<FairRunAna>();
-    auto filesource = std::make_unique<R3BFileSource2>(simuFileName->value().c_str());
+    auto filesource = std::make_unique<R3BFileSource2>();
+    auto filename_begin = std::string::size_type{ 0 };
+    for (auto filename_end = std::string::size_type{ 0 }; filename_end != std::string::npos;
+         filename_begin = filename_end + 1)
+    {
+        filename_end = simuFileNames->value().find(';', filename_begin);
+        auto filename = simuFileNames->value().substr(filename_begin, filename_end - filename_begin);
+        filesource->AddFile(filename);
+    }
+
     auto filesink = std::make_unique<FairRootFileSink>(digiFileName->value().c_str());
     run->SetSource(filesource.release());
     run->SetSink(filesink.release());
@@ -119,13 +136,33 @@ auto main(int argc, const char** argv) -> int
         run->GetRuntimeDb()->setSecondInput(fileio2.release());
     }
 
+    // ===================================================================
+    // adding tasks
     auto digiNeuland = std::make_unique<R3BNeulandDigitizer>();
     digiNeuland->SetEngine((neulandEngines.at({ paddleName->value(), channelName->value() }))());
     run->AddTask(digiNeuland.release());
+
+    run->AddTask(std::make_unique<R3BNeulandPrimaryInteractionFinder>().release());
+    run->AddTask(std::make_unique<R3BNeulandClusterFinder>().release());
+    run->AddTask(std::make_unique<R3BNeulandClusterFinder>().release());
+    run->AddTask(std::make_unique<R3BNeulandPrimaryClusterFinder>().release());
+    run->AddTask(std::make_unique<R3BNeulandMultiplicityCalorimetricTrain>().release());
+
     auto hitmon = std::make_unique<R3BNeulandHitMon>();
     run->AddTask(hitmon.release());
 
+    // ===================================================================
+    // FairRun init
     run->Init();
+
+    // ===================================================================
+    // parameter output
+    auto parFileIO = std::make_unique<FairParRootFileIo>(true);
+    parFileIO->open(parOut->value().c_str());
+    auto* rtdb = run->GetRuntimeDb();
+    rtdb->setOutput(parFileIO.release());
+    rtdb->saveOutput();
+
     run->Run(0, eventNum->value());
 
     timer.Stop();

@@ -25,6 +25,9 @@ set(EXE_NAME neulandAna)
 set(DEPENDENCIES
     R3BNeulandShared
     R3BNeulandDigitizing
+    R3BNeulandClustering
+    R3BNeulandReconstruction
+    R3BNeulandSimulation
     R3BPassive
     R3BData
     R3BBase
