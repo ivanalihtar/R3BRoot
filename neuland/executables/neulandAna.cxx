@@ -146,7 +146,7 @@ auto main(int argc, const char** argv) -> int
     run->AddTask(std::make_unique<R3BNeulandClusterFinder>().release());
     run->AddTask(std::make_unique<R3BNeulandClusterFinder>().release());
     run->AddTask(std::make_unique<R3BNeulandPrimaryClusterFinder>().release());
-    run->AddTask(std::make_unique<R3BNeulandMultiplicityCalorimetricTrain>().release());
+    //run->AddTask(std::make_unique<R3BNeulandMultiplicityCalorimetricTrain>().release());
 
     auto hitmon = std::make_unique<R3BNeulandHitMon>();
     run->AddTask(hitmon.release());
