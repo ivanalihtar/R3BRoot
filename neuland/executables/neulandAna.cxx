@@ -84,12 +84,8 @@ auto main(int argc, const char** argv) -> int
     //=============================================================================
     // settings:
     auto tamexParameter = Digitizing::Neuland::Tamex::Params{ TamexChannel::GetDefaultRandomGen() };
-<<<<<<< Updated upstream
     auto pileup_strategy = Digitizing::Neuland::Tamex::PeakPileUpStrategy::time_window;
     tamexParameter.fPMTThresh = 1.;
-=======
-    tamexParameter.fPMTThresh = 0.;
->>>>>>> Stashed changes
     tamexParameter.fTimeMin = 1.;
     tamexParameter.fExperimentalDataIsCorrectedForSaturation = kTRUE;
 
