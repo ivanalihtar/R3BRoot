@@ -87,15 +87,6 @@ class R3BIncomingBeta : public FairTask
 
     virtual void Reset();
 
-    void SetBetaCorrectionForZ(Double_t p0, Double_t p1, Double_t p2, Double_t Zprimary, Double_t Zoffset)
-    {
-        fP0 = p0;
-        fP1 = p1;
-        fP2 = p2;
-        fZprimary = Zprimary;
-        fZoffset = Zoffset;
-    }
-
     // Accessor to select online mode
     void SetOnline(Bool_t option) { fOnline = option; }
     void SetUseTref() { fUseTref = kTRUE; }
@@ -115,7 +106,6 @@ class R3BIncomingBeta : public FairTask
     TClonesArray* fTcalSci2; /**< Array with Tcal items. */
 
     Bool_t fOnline; // Don't store data for online
-    Double_t fP0, fP1, fP2, fZprimary, fZoffset;
 
     Double_t fPos_p0;
     Double_t fPos_p1;

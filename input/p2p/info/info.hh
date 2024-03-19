@@ -4,7 +4,7 @@
 #include <math.h>
 
 const int    MAX_STORY = 10000000; 	 // Total number of generated events
-const double ENERGY    = 500.;           // Beam energy (MeV/u)
+const double ENERGY    = 800.;           // Beam energy (MeV/u)
 const double Exe       = 0.0;        // Residual excitation energy (MeV) (change it for deeply bound states)
 const bool   ISOTROPIC = true;           // Internal momentum spread (Gauss)
 //const double UNIT = 931.494061;          // Atomic mass unit MeV/c²
@@ -14,12 +14,12 @@ const double UNIT = 931.4940954;          // Atomic mass unit MeV/c²
 //Nuclear masses from http://wwwndc.jaea.go.jp/NuC/
 // warn (M. Winkel): website above lists ATOMIC masses!
 
-//C-12
+//Deuteron beam
 
-const int    A 	 = 12;                            // Mass number of the nucleus A
-const double MA  = 12.*UNIT;		          // Nuclear mass of initital A nucleus(MeV/c²)
-const double MB  = 11.009305404*UNIT + Exe;       // Nuclear mass of the residual fragment B (MeV/c²)
-const double MOM_SIGMA = 20.00;                  // Internal momentum spread (Gauss)
+const int    A 	 = 2;                            // Mass number of the nucleus A
+const double MA  = 2.01355*UNIT;		          // Nuclear mass of initital A nucleus(MeV/c²)
+const double MB  = 1.00866*UNIT + Exe;       // Nuclear mass of the residual fragment B (MeV/c²)
+const double MOM_SIGMA = 38.;                  // Internal momentum spread (Gauss)
 
 /*
 //Pb-208

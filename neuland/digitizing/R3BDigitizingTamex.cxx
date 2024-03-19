@@ -63,8 +63,6 @@ namespace R3B::Digitizing::Neuland::Tamex
     {
         auto par = channel.GetParConstRef();
         // apply saturation coefficent
-        qdc_ = pmtHit.light / (1. + par.fSaturationCoefficient * pmtHit.light);
-    };
 
     auto PMTPeak::operator+=(const PMTPeak& other) -> PMTPeak&
     {

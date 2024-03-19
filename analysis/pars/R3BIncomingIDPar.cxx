@@ -97,7 +97,11 @@ void R3BIncomingIDPar::putParams(FairParamList* list)
     list->add("ang_Aq", fang_Aq);
     list->add("Beta_min", fBeta_min);
     list->add("Beta_max", fBeta_max);
-
+    list->add("P0", fP0);
+    list->add("P1", fP1);
+    list->add("P2", fP2);
+    list->add("Zprimary", fZprimary);
+    list->add("Zoffset", fZoffset);
     fTcutparS2->putParams(list);
     fTcutparCave->putParams(list);
 }
@@ -181,6 +185,31 @@ Bool_t R3BIncomingIDPar::getParams(FairParamList* list)
     if (!(list->fill("Beta_max", &fBeta_max)))
     {
         LOG(error) << "Could not initialize incomingID Beta_max Par";
+        return kFALSE;
+    }
+    if (!(list->fill("P0", &fP0)))
+    {
+        LOG(error) << "Could not initialize incomingID P0 Par";
+        return kFALSE;
+    }
+    if (!(list->fill("P1", &fP1)))
+    {
+        LOG(error) << "Could not initialize incomingID P1 Par";
+        return kFALSE;
+    }
+    if (!(list->fill("P2", &fP2)))
+    {
+        LOG(error) << "Could not initialize incomingID P2 Par";
+        return kFALSE;
+    }
+    if (!(list->fill("Zprimary", &fZprimary)))
+    {
+        LOG(error) << "Could not initialize incomingID Zprimary Par";
+        return kFALSE;
+    }
+    if (!(list->fill("Zoffset", &fZoffset)))
+    {
+        LOG(error) << "Could not initialize incomingID Zoffset Par";
         return kFALSE;
     }
 

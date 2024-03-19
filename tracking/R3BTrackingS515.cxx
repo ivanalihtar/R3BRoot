@@ -24,7 +24,8 @@
 
 #include "R3BMCTrack.h"
 #include "R3BMDFWrapper.h"
-#include "R3BTrack.h"
+//#include "R3BTrack.h"// uncoment if compiling fails
+#include "R3BTrackS515.h"// remove if compiling fails
 
 #include "FairLogger.h"
 #include "FairRootManager.h"
@@ -69,7 +70,7 @@ R3BTrackingS515::R3BTrackingS515(const char* name, Int_t iVerbose)
     , fNEvents(0)
     , maxevent(0)
     , DoAlignment(false)
-    , fTrackItems(new TClonesArray("R3BTrack"))
+    , fTrackItems(new TClonesArray("R3BTrackS515"))//remove "S515" if compiling fails
     , reference_PoQ(0.)
     , GladCurrent(-1)
     , GladReferenceCurrent(-1)
@@ -170,13 +171,37 @@ void R3BTrackingS515::Exec(Option_t* option)
     auto frs_DataItems = fDataItems.at(FRS_DATA);
     auto music_DataItems = fDataItems.at(MUSIC_HITDATA);
     auto los_DataItems = fDataItems.at(LOS_HITDATA);
-
+    //auto tpat = fHeader->GetTpat();
+    //std::cout<<"tpat:"<<tpat<<endl;
+    //if(tpat>=1024) return;
+    //if((tpat&1)==1 ||(tpat&32)==32) 
+    //  {
+    /*  counter_a++;
     // Minimum multiplicity condition
+    
+    if(frs_DataItems->GetEntriesFast() < 1) return;
+    counter_b0++;
+    if(los_DataItems->GetEntriesFast() < 1) return;
+    counter_b1++;
+    if(music_DataItems->GetEntriesFast() < 1) return;
+    counter_b2++;
+    if(mwpc_DataItems->GetEntriesFast() != 1) return;
+    counter_b3++;
+    if(fDataItems.at(DET_FI10)->GetEntriesFast() == 0) return;
+    counter_b4++;
+    if(fDataItems.at(DET_FI11)->GetEntriesFast() == 0) return;
+    counter_b5++;
+    if(fDataItems.at(DET_FI12)->GetEntriesFast() == 0) return;
+    counter_b6++;
+    if(tofd_DataItems->GetEntriesFast() < 1) return;
+    counter_b7++;
+    */
     if (mwpc_DataItems->GetEntriesFast() != 1 || frs_DataItems->GetEntriesFast() < 1 ||
         music_DataItems->GetEntriesFast() < 1 || los_DataItems->GetEntriesFast() < 1 ||
         fDataItems.at(DET_FI10)->GetEntriesFast() == 0 || fDataItems.at(DET_FI11)->GetEntriesFast() == 0 ||
         fDataItems.at(DET_FI12)->GetEntriesFast() == 0 || tofd_DataItems->GetEntriesFast() < 1)
         return;
+    //counter_b++;
 
     // Get hit data from every upstream detector
     // (for now using only one/first hit)
@@ -185,15 +210,18 @@ void R3BTrackingS515::Exec(Option_t* option)
     auto frs_data = dynamic_cast<R3BFrsData*>(frs_DataItems->At(0));
     if (!IsInsideFrsEllipticPIDCut(frs_data->GetZ(), frs_data->GetAq()))
         return;
+//    counter_c++;
 
     auto music_hit = dynamic_cast<R3BMusicHitData*>(music_DataItems->At(0));
     if (music_hit->GetZcharge() < MusicZMin || music_hit->GetZcharge() > MusicZMax)
         return;
+//    counter_d++;
 
     auto mwpc_hit = dynamic_cast<R3BMwpcHitData*>(mwpc_DataItems->At(0));
 
     // Reading fiber detectors (using only highest energy hit)
-    R3BBunchedFiberHitData *f10_hit{}, *f11_hit{}, *f12_hit{}, *this_hit{};
+    R3BBunchedFiberHitData *f10_hit{}, *f11_hit{}, *f12_hit{}, *this_hit{};//commented by Eleonora 30.10.2023
+    ///R3BBunchedFiberHitData *f10_hit{}, *f11_hit{}, *this_hit{};
     int f{};
     double energy = 0;
     for (f = 0; f < NOF_FIB_DET; ++f)
@@ -223,9 +251,11 @@ void R3BTrackingS515::Exec(Option_t* option)
         if (energy == 0)
             break; // no good energy in this fiber
     }
-    if (f != 3)
+    if (f != 3)//commented by Eleonora 30.10.2023
         return; // good hits should be found in all 3 fibers
-    assert(f10_hit && f11_hit && f12_hit && "Not all fibers found.");
+  //  counter_e++;
+    assert(f10_hit && f11_hit && f12_hit && "Not all fibers found.");//commented by Eleonora 30.10.2023
+    //assert(f10_hit && f11_hit && "Not all fibers found.");//added by Eleonora 30.10.2023
     // Reading TOFD data
     R3BTofdHitData* tofd_hit;
     bool is_good_tofd = false;
@@ -237,13 +267,14 @@ void R3BTrackingS515::Exec(Option_t* option)
     }
     if (!is_good_tofd)
         return;
-
+    //counter_f++;
     // Set TVector3 for every detector hit
     mwpc_point.SetXYZ(mwpc_hit->GetX() * 0.1, mwpc_hit->GetY() * 0.1, 0.); // converting mm to cm
     f10_point.SetXYZ(f10_hit->GetX(), 0, 0);
     f11_point.SetXYZ(f11_hit->GetX(), 0, 0);
-    f12_point.SetXYZ(0, f12_hit->GetY(), 0);
+    f12_point.SetXYZ(0, f12_hit->GetY(), 0);//commented by Eleonora 30.10.2023
     tofd_point.SetXYZ(tofd_hit->GetX(), tofd_hit->GetY(), 0);
+    //tofd_point.SetXYZ(0, tofd_hit->GetY(), 0);//added by Eleonora 30.10.2023
 
     //-------- Collect detector data for the alignment
     if (DoAlignment)
@@ -251,7 +282,8 @@ void R3BTrackingS515::Exec(Option_t* option)
         det_points align_data;
         align_data.f10.SetXYZ(f10_point.X(), f10_point.Y(), f10_point.Z());
         align_data.f11.SetXYZ(f11_point.X(), f11_point.Y(), f11_point.Z());
-        align_data.f12.SetXYZ(f12_point.X(), f12_point.Y(), f12_point.Z());
+        align_data.f12.SetXYZ(f12_point.X(), f12_point.Y(), f12_point.Z());//commented by Eleonora 30.10.2023
+        //align_data.tofd.SetXYZ(tofd_point.X(), tofd_point.Y(), tofd_point.Z());//added by Eleonora 30.10.2023
         align_data.mwpc.SetXYZ(mwpc_point.X(), mwpc_point.Y(), mwpc_point.Z());
         det_points_vec.push_back(align_data);
     }
@@ -260,8 +292,8 @@ void R3BTrackingS515::Exec(Option_t* option)
     TransformPoint(mwpc_point, mwpc_angles, mwpc_position);
     TransformPoint(f10_point, f10_angles, f10_position);
     TransformPoint(f11_point, f11_angles, f11_position);
-    TransformPoint(f12_point, f12_angles, f12_position);
-    TransformPoint(tofd_point, tofd_angles, tofd_position);
+    TransformPoint(f12_point, f12_angles, f12_position);//commented by Eleonora 30.10.2023
+    //TransformPoint(tofd_point, tofd_angles, tofd_position);
 
     //------ Additionally extrapolate X and Z coordinates of f12
     // Define two (X,Z) points on the f12 plane:
@@ -279,6 +311,7 @@ void R3BTrackingS515::Exec(Option_t* option)
     // Extrapolate final X and Z position in f12
     f12_point.SetZ((track_offset - f12_offset) / (f12_slope - track_slope)); // extrapolated
     f12_point.SetX(track_slope * f12_point.Z() + track_offset);              // extrapolated
+    
 
     // Calculate all necessary MDF values
     // preserve the order, it is expected by the MDF function!
@@ -290,6 +323,7 @@ void R3BTrackingS515::Exec(Option_t* option)
     mdf_data[5] = f11_point.X();
     mdf_data[6] = f11_point.Z();
     mdf_data[7] = (f12_point.Y() - mwpc_point.Y()) / (f12_point.Z() - mwpc_point.Z());
+    //mdf_data[7] = (tofd_point.Y() - mwpc_point.Y()) / (tofd_point.Z() - mwpc_point.Z());
 
     PoQ = MDF_PoQ->MDF(mdf_data) * GladCurrent / GladReferenceCurrent;
     TX0 = MDF_TX0->MDF(mdf_data);
@@ -322,8 +356,11 @@ void R3BTrackingS515::Exec(Option_t* option)
     TVector3 vec_PoQ(TX0, TY0, 1);
     vec_PoQ.SetMag(PoQ);
 
-    AddTrackData(mwpc_point, vec_PoQ, music_hit->GetZcharge(), mdf_AoZ); // chix, chiy, quality
+    //AddTrackData(mwpc_point, vec_PoQ, music_hit->GetZcharge(), mdf_AoZ); // chix, chiy, quality//uncomment if compiling fails
+    AddTrackData(mwpc_point, vec_PoQ, music_hit->GetZcharge(), mdf_AoZ, FlightPath); // chix, chiy, quality, FlightPath
+//counter_g++;
     return;
+    //}
 }
 
 void R3BTrackingS515::FinishEvent()
@@ -338,16 +375,20 @@ void R3BTrackingS515::FinishEvent()
 void R3BTrackingS515::FinishTask()
 {
     LOG(info) << "Processed " << fNEvents << " events\n\n";
+    //std::cout << counter_a << " " <<  counter_b0 << " " << counter_b1 << " " << counter_b2 << " " << counter_b3 << " " << counter_b4 << " " << counter_b5 << " " << counter_b6 << " " << counter_b7 << std::endl;
+//    std::cout << counter_a << " " <<  counter_b << " " << counter_c << " " << counter_d << " " << counter_e << " " << counter_f << " " << counter_g << std::endl;
     if (DoAlignment)
         Alignment();
 }
 
-R3BTrack* R3BTrackingS515::AddTrackData(TVector3 mw, TVector3 poq, Double_t charge, Double_t aoz)
+//R3BTrack* R3BTrackingS515::AddTrackData(TVector3 mw, TVector3 poq, Double_t charge, Double_t aoz)//uncomment if compiling fails
+R3BTrackS515* R3BTrackingS515::AddTrackData(TVector3 mw, TVector3 poq, Double_t charge, Double_t aoz, Double_t FP)// remove if compiling fails
 {
     // Filling output track info
     TClonesArray& clref = *fTrackItems;
     Int_t size = clref.GetEntriesFast();
-    return new (clref[size]) R3BTrack(mw.X(), mw.Y(), mw.Z(), poq.X(), poq.Y(), poq.Z(), charge, aoz, 0., 0., 0);
+   // return new (clref[size]) R3BTrack(mw.X(), mw.Y(), mw.Z(), poq.X(), poq.Y(), poq.Z(), charge, aoz, 0., 0., 0);// uncomment if compiling fails
+    return new (clref[size]) R3BTrackS515(mw.X(), mw.Y(), mw.Z(), poq.X(), poq.Y(), poq.Z(), charge, aoz, 0., 0., 0., FP);// remove if compiling fails
 }
 
 void R3BTrackingS515::TransformPoint(TVector3& point, TVector3 rot, TVector3 trans)
@@ -527,6 +568,9 @@ double R3BTrackingS515::AlignmentErrorS515(const double* par)
     gMDFTracker->f12_ang_offset.SetXYZ(0, par[15], par[16]);
     gMDFTracker->f12_pos_offset.SetXYZ(par[17], par[18], par[19]);
 
+    //gMDFTracker->tofd_ang_offset.SetXYZ(0, par[15], par[16]);
+    //gMDFTracker->tofd_pos_offset.SetXYZ(par[17], par[18], par[19]);
+
     Double_t mdf_input[8]; // data container for the MDF function
 
     double v2 = 0;
@@ -538,6 +582,7 @@ double R3BTrackingS515::AlignmentErrorS515(const double* par)
         gMDFTracker->f10_point = d.f10;
         gMDFTracker->f11_point = d.f11;
         gMDFTracker->f12_point = d.f12;
+        //gMDFTracker->tofd_point = d.tofd;
 
         // This will transform "det_point" vectors into lab frame
         gMDFTracker->TransformPoint(gMDFTracker->mwpc_point,
@@ -556,6 +601,10 @@ double R3BTrackingS515::AlignmentErrorS515(const double* par)
                                     gMDFTracker->GetEulerAnglesF12() + gMDFTracker->f12_ang_offset,
                                     gMDFTracker->GetPositionF12() + gMDFTracker->f12_pos_offset);
 
+        //gMDFTracker->TransformPoint(gMDFTracker->tofd_point,
+        //                            gMDFTracker->GetEulerAnglesTofd() + gMDFTracker->tofd_ang_offset,
+        //                            gMDFTracker->GetPositionTofd() + gMDFTracker->tofd_pos_offset);                       
+
         mdf_input[0] = gMDFTracker->mwpc_point.X();
         mdf_input[1] = gMDFTracker->mwpc_point.Y();
         mdf_input[2] = gMDFTracker->mwpc_point.Z();
@@ -564,6 +613,7 @@ double R3BTrackingS515::AlignmentErrorS515(const double* par)
         mdf_input[5] = gMDFTracker->f11_point.X();
         mdf_input[6] = gMDFTracker->f11_point.Z();
         mdf_input[7] = (gMDFTracker->f12_point.Y() - mdf_input[1]) / (gMDFTracker->f12_point.Z() - mdf_input[2]);
+        //mdf_input[7] = (gMDFTracker->tofd_point.Y() - mdf_input[1]) / (gMDFTracker->tofd_point.Z() - mdf_input[2]);
 
         v2 += pow((gMDFTracker->Get_MDF_PoQ()->MDF(mdf_input) - gMDFTracker->GetReferencePoQ()), 2);
         counter++;

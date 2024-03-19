@@ -21,7 +21,7 @@
 namespace R3B::Digitizing::Neuland::TacQuila
 {
     Params::Params()
-        : fPMTThresh(1.)                // [MeV]
+        : fPMTThresh(0.)                // [MeV]
         , fSaturationCoefficient(0.012) //
         , fExperimentalDataIsCorrectedForSaturation(true)
         , fTimeRes(0.15)         // time + Gaus(0., fTimeRes) [ns]

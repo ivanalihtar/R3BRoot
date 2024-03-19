@@ -60,11 +60,11 @@ R3BAnalysisIncomingID::R3BAnalysisIncomingID(const char* name, Int_t iVerbose)
     , fFrsDataCA(NULL)
     , fPos_p0(-11)
     , fPos_p1(54.7)
-    , fP0(-2.12371e7)
-    , fP1(4.9473e7)
-    , fP2(-2.87635e7)
-    , fZprimary(50.)
-    , fZoffset(-1.3)
+    , fP0(0.)
+    , fP1(0.)
+    , fP2(0.)
+    , fZprimary(0.)
+    , fZoffset(0.)
     , fOnline(kFALSE)
     , fIncomingID_Par(NULL)
     , fNumDet(1)
@@ -116,6 +116,11 @@ void R3BAnalysisIncomingID::SetParameter()
     fang_Aq = fIncomingID_Par->Getang_Aq();
     fBeta_min = fIncomingID_Par->GetBeta_min();
     fBeta_max = fIncomingID_Par->GetBeta_max();
+    fP0 = fIncomingID_Par->GetP0();
+    fP1 = fIncomingID_Par->GetP1();
+    fP2 = fIncomingID_Par->GetP2();
+    fZprimary = fIncomingID_Par->GetZprimary();
+    fZoffset = fIncomingID_Par->GetZoffset();
 
     fCutS2 = fIncomingID_Par->GetCutS2();
     fCutCave = fIncomingID_Par->GetCutCave();
@@ -131,6 +136,8 @@ void R3BAnalysisIncomingID::SetParameter()
         fBrho0_S2toCC->AddAt(fIncomingID_Par->GetBrho0_S2toCC(i), i - 1);
     }
     R3BLOG(info, "Brho:" << fBrho0_S2toCC->GetAt(0));
+    R3BLOG(info, "P0:" << fP0);
+    R3BLOG(info, "Zprimary:" << fZprimary);
     return;
 }
 
@@ -377,7 +384,7 @@ void R3BAnalysisIncomingID::Exec(Option_t* option)
 
                     if (ZPsp > 0. && !fUseLOS && fUsePspx1)
                     {
-                        hitfrs->SetZ(ZPsp);
+                        hitfrs->SetZ(ZPsp*fZprimary/(fP0-fP1*betaS2));
                         hitfrs->SetAq(AoQ_m1_corr);
                         hitfrs->SetBrho(Brho_m1);
                     }
@@ -420,7 +427,7 @@ void R3BAnalysisIncomingID::Exec(Option_t* option)
 
                     if (ZPsp > 0. && !fUseLOS && fUsePspx1)
                     {
-                        hitfrs->SetZ(ZPsp);
+                        hitfrs->SetZ(ZPsp*fZprimary/(fP0-fP1*betaS2));
                         hitfrs->SetAq(AoQ_m1_corr);
                         hitfrs->SetBrho(Brho_m1);
                     }

@@ -67,6 +67,11 @@ class R3BIncomingIDPar : public FairParGenericSet
     const Float_t GetTof2InvV_p1(Int_t det) { return fTof2InvV_p1->GetAt(det - 1); }
     const Float_t GetBeta_min() { return fBeta_min; }
     const Float_t GetBeta_max() { return fBeta_max; }
+    const Double_t GetP0() { return fP0; }
+    const Double_t GetP1() { return fP1; }
+    const Double_t GetP2() { return fP2; }
+    const Double_t GetZprimary() { return fZprimary; }
+    const Double_t GetZoffset() { return fZoffset; }
     TCutG* GetCutS2() { return fTcutparS2->GetCut(); }
     TCutG* GetCutCave() { return fTcutparCave->GetCut(); }
 
@@ -93,6 +98,7 @@ class R3BIncomingIDPar : public FairParGenericSet
     Float_t fx0_point, fy0_point, frot_ang;
     Float_t fx0_Aq, fy0_Aq, fang_Aq;
     Float_t fBeta_max, fBeta_min;
+    Double_t fP0, fP1, fP2, fZprimary, fZoffset;
 
     R3BTcutPar* fTcutparS2;
     R3BTcutPar* fTcutparCave;

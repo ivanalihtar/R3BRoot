@@ -84,9 +84,14 @@ auto main(int argc, const char** argv) -> int
     //=============================================================================
     // settings:
     auto tamexParameter = Digitizing::Neuland::Tamex::Params{ TamexChannel::GetDefaultRandomGen() };
+<<<<<<< Updated upstream
     auto pileup_strategy = Digitizing::Neuland::Tamex::PeakPileUpStrategy::time_window;
     tamexParameter.fPMTThresh = 1.;
+=======
+    tamexParameter.fPMTThresh = 0.;
+>>>>>>> Stashed changes
     tamexParameter.fTimeMin = 1.;
+    tamexParameter.fExperimentalDataIsCorrectedForSaturation = kTRUE;
 
     const auto neulandEngines = std::map<std::pair<const std::string, const std::string>,
                                          std::function<std::unique_ptr<Digitizing::DigitizingEngineInterface>()>>{

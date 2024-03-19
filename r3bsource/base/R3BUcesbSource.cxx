@@ -190,6 +190,10 @@ Bool_t R3BUcesbSource::InitUnpackers()
                    "data members. Unpacker needs fixing.");
         }
 
+/*        R3BLOG(error,
+               "ext_data_clnt::setup() mapping failure may "
+               "cause unexpected analysis results due to missing "
+               "data members. Unpacker needs fixing.");*/
         return kFALSE;
     }
 

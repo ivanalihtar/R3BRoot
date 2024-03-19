@@ -177,7 +177,7 @@ void run(TString fname)
         // eventId >> nTracks >> pBeam;
         // iPid  >> iZ >> iA >> px >> py >> pz >> vx >> vy >> vz;
         sprintf(tooutfile,
-                "%d\t2\t%0.5E\n2212\t1\t1\t%0.5E\t%0.5E\t%0.5E\t0\t0\t0\n2212\t1\t1\t%0.5E\t%0.5E\t%0.5E\t0\t0\t0\n",
+                "%d\t3\t%0.5E\n2212\t1\t1\t%0.5E\t%0.5E\t%0.5E\t0\t0\t0\n2212\t1\t1\t%0.5E\t%0.5E\t%0.5E\t0\t0\t0\n2112\t0\t1\t%0.5E\t%0.5E\t%0.5E\t0\t0\t0\n",
                 events,
                 PA / 1000,
                 P2x / 1000,
@@ -185,7 +185,10 @@ void run(TString fname)
                 P2z / 1000,
                 P1x / 1000,
                 P1y / 1000,
-                P1z / 1000);
+                P1z / 1000,
+                PBx / 1000,
+                PBy / 1000,
+                PBz_lab / 1000);
 
         outfile_ascii << tooutfile; // create an input for the R3BAsciiGenerator
 

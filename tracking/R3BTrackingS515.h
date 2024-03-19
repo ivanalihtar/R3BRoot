@@ -19,7 +19,8 @@
 #include "FairTask.h"
 #include "R3BEventHeader.h"
 #include "R3BMDFWrapper.h"
-#include "R3BTrack.h"
+//#include "R3BTrack.h"//comented 15.11.2023, uncomment if compiling fails
+#include "R3BTrackS515.h"//remove if compailing fails
 #include "TCanvas.h"
 #include "TClonesArray.h"
 #include "TMath.h"
@@ -59,6 +60,8 @@ class R3BTrackingS515 : public FairTask
     void SetTrigger(Int_t trigger) { fTrigger = trigger; }
     void SetTpat(Int_t tpat) { fTpat = tpat; }
     void SetMaxEvent(Int_t nev) { maxevent = nev; }
+//    int counter_a=0,counter_b=0,counter_c=0,counter_d=0,counter_e=0,counter_f=0,counter_g=0;
+//    int counter_b0=0,counter_b1=0,counter_b2=0,counter_b3=0,counter_b4=0,counter_b5=0,counter_b6=0,counter_b7=0;
 
     // Set lab positions and angles of the detectors from the steering macro
     void SetPositionLOS(double x, double y, double z) { los_position.SetXYZ(x, y, z); }   // cm
@@ -137,7 +140,9 @@ class R3BTrackingS515 : public FairTask
 
     TVector3 mwpc_point, f10_point, f11_point, f12_point, tofd_point;
     TVector3 mwpc_ang_offset, f10_ang_offset, f11_ang_offset, f12_ang_offset;
+    //TVector3 mwpc_ang_offset, f10_ang_offset, f11_ang_offset, tofd_ang_offset;
     TVector3 mwpc_pos_offset, f10_pos_offset, f11_pos_offset, f12_pos_offset;
+    //TVector3 mwpc_pos_offset, f10_pos_offset, f11_pos_offset, tofd_pos_offset;
 
   private:
     //-- Input hit data from the TClonesArray
@@ -161,6 +166,9 @@ class R3BTrackingS515 : public FairTask
 
     // Names of essential branches in the input tree
     // do not change the order! add new data in the end
+    //const char* fDetectorNames[DET_MAX + 1] = { "Fi10Hit", "Fi11Hit",      "Fi12Hit", "TofdHit", "Mwpc0HitData",
+                                               // "FrsData", "MusicHitData", "LosHit",  NULL };
+
     const char* fDetectorNames[DET_MAX + 1] = { "Fi10Hit", "Fi11Hit",      "Fi12Hit", "TofdHit", "Mwpc0HitData",
                                                 "FrsData", "MusicHitData", "LosHit",  NULL };
 
@@ -241,7 +249,8 @@ class R3BTrackingS515 : public FairTask
     const Double_t AMU = 0.9314940038;          // GeV/c2
 
     // Private method to fill output track data
-    R3BTrack* AddTrackData(TVector3 mw, TVector3 poq, Double_t charge, Double_t aoz);
+    //R3BTrack* AddTrackData(TVector3 mw, TVector3 poq, Double_t charge, Double_t aoz);// uncomment if compilig fails
+    R3BTrackS515* AddTrackData(TVector3 mw, TVector3 poq, Double_t charge, Double_t aoz, Double_t FlightPath);// remove if compiling fails
 
   public:
     ClassDef(R3BTrackingS515, 1)
