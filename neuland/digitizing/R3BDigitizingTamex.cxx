@@ -65,6 +65,7 @@ namespace R3B::Digitizing::Neuland::Tamex
         // apply saturation coefficent
         qdc_ = pmtHit.light / (1. + par.fSaturationCoefficient * pmtHit.light);
     };
+
     auto PMTPeak::operator+=(const PMTPeak& other) -> PMTPeak&
     {
         qdc_ += other.qdc_;
@@ -109,6 +110,12 @@ namespace R3B::Digitizing::Neuland::Tamex
         trailing_edge_time_ =
             (trailing_edge_time_ > other.trailing_edge_time_) ? trailing_edge_time_ : other.trailing_edge_time_;
         width_ = trailing_edge_time_ - leading_edge_time_;
+        //LOG(info) << "Width is = " << width_;
+        std::cout << "Width is = " << width_ << std::endl;
+        // begin - Ivana
+        // non-linearity that we see in TAMEX electronics in ToT vs charge
+        if (width_ > 460.) width_ = (width_-437.38)/1.15;
+        // end - Ivana
         qdc_ = WidthToQdc(width_, channel_ptr_->GetParConstRef());
     }
 
@@ -248,17 +255,26 @@ namespace R3B::Digitizing::Neuland::Tamex
     template <typename Peak>
     void Channel::PeakPileUp(/* inout */ std::vector<Peak>& peaks)
     {
-        if (peaks.empty() == 0)
+        if (peaks.size() <= 1)
         {
             return;
         }
-        for (auto it = peaks.end() - 1; it != peaks.begin(); --it)
+        
+        std::sort(peaks.begin(), peaks.end(), std::less{});
+        for (auto front_peak = peaks.begin(); front_peak != peaks.end(); ++front_peak)
         {
-            if (*it == *(it - 1))
-            {
-                *(it - 1) += *it;
-                peaks.erase(it);
-            }
+           auto end_peak = std::remove_if(front_peak + 1,
+                                           peaks.end(),
+                                           [&front_peak](auto& peak)
+                                           {
+                                               if (*front_peak == peak)
+                                               {
+                                                   (*front_peak) += peak;
+                                                   return true;
+                                               }
+                                               return false;
+                                           });
+            peaks.erase(end_peak, peaks.end());
         }
     }
 

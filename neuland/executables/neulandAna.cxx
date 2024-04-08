@@ -56,7 +56,7 @@ auto main(int argc, const char** argv) -> int
         "parOut", "set the filename of the parameter output", "trainPar.root");
     auto digiFileName =
         programOptions.Create_Option<std::string>("digiFile", "set the filename of digitization output", "digi.root");
-    auto logLevel = programOptions.Create_Option<std::string>("logLevel,v", "set log level of fairlog", "error");
+    auto logLevel = programOptions.Create_Option<std::string>("logLevel,v", "set log level of fairlog", "info");
     auto eventNum = programOptions.Create_Option<int>("eventNum,n", "set total event number", 0);
     auto hitLevelPar =
         programOptions.Create_Option<std::string>("hitLevelPar", "set the name of hit level parameter if needed.", "");
@@ -84,9 +84,13 @@ auto main(int argc, const char** argv) -> int
     //=============================================================================
     // settings:
     auto tamexParameter = Digitizing::Neuland::Tamex::Params{ TamexChannel::GetDefaultRandomGen() };
-    auto pileup_strategy = Digitizing::Neuland::Tamex::PeakPileUpStrategy::time_window;
-    tamexParameter.fPMTThresh = 1.;
-    tamexParameter.fTimeMin = 1.;
+    // here choose the PileUp strategy: width, distance or time_window
+    auto pileup_strategy = Digitizing::Neuland::Tamex::PeakPileUpStrategy::distance;
+    tamexParameter.fPMTThresh = 0.3;
+    //tamexParameter.fTimeMin = 1.;
+    //tamexParameter.fPedestal = 0.;
+    //tamexParameter.fEnergyGain = 20.;
+    tamexParameter.fSaturationCoefficient= 0.012;
     tamexParameter.fExperimentalDataIsCorrectedForSaturation = kTRUE;
 
     const auto neulandEngines = std::map<std::pair<const std::string, const std::string>,
@@ -130,6 +134,7 @@ auto main(int argc, const char** argv) -> int
     auto filesink = std::make_unique<FairRootFileSink>(digiFileName->value().c_str());
     run->SetSource(filesource.release());
     run->SetSink(filesink.release());
+    run->SetRunId(999);
 
     auto fileio = std::make_unique<FairParRootFileIo>();
     fileio->open(paraFileName->value().c_str());
