@@ -39,7 +39,7 @@ namespace R3B::Digitizing::Neuland::Tamex
         double fPMTThresh = 1.;                // [MeV]
         double fSaturationCoefficient = 0.012; // Saturation coefficient of PMTs
         bool fExperimentalDataIsCorrectedForSaturation = true;
-        double fTimeRes = 0.15; // time + Gaus(0., fTimeRes) [ns]
+        double fTimeRes = 0.23; // time + Gaus(0., fTimeRes) [ns]
         double fEResRel = 0.05; // Gaus(e, fEResRel * e) []
         double fEnergyGain = 15.0;
         double fPedestal = 14.0;
@@ -109,6 +109,19 @@ namespace R3B::Digitizing::Neuland::Tamex
         template <typename Par>
         static auto WidthToQdc(double width, const Par& par) -> double
         {
+            // begin ivana
+            /*auto qdc_exp = NAN;
+            if (width < 470.)
+            {
+            	qdc_exp = std::max(1., width - par.fPedestal) / par.fEnergyGain;
+            }
+            else
+            {
+            	qdc_exp = std::max(1., (width - par.fPedestal-437.38)/1.15) / par.fEnergyGain;
+
+            }
+            return width;*/
+            // end ivana
             return std::max(1., width - par.fPedestal) / par.fEnergyGain;
         }
 

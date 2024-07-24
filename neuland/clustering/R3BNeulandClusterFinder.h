@@ -34,9 +34,9 @@
 class R3BNeulandClusterFinder : public FairTask
 {
   public:
-    R3BNeulandClusterFinder(Double_t dx = 1. * 7.5,
-                            Double_t dy = 1. * 7.5,
-                            Double_t dz = 2. * 7.5,
+    R3BNeulandClusterFinder(Double_t dx = 15.,//2. * 7.5,
+                            Double_t dy = 15.,//2. * 7.5,
+                            Double_t dz = 30.,//2. * 7.5,
                             Double_t dt = 1.,
                             TString input = "NeulandHits",
                             TString output = "NeulandClusters");

@@ -42,8 +42,8 @@ void SetCuts()
     MC->SetProcess("LOSS", 1); /**energy loss*/
     MC->SetProcess("MULS", 1); /**multiple scattering*/
 
-    const Double_t cut1 = 1.0E-4; // GeV --> 100 keV
-    const Double_t cut2 = 1.0E-2; // GeV --> 10 MeV
+    const Double_t cut1 = 1E-4; // GeV --> 100 keV
+    const Double_t cut2 = 1E-4; //ivana: 1 MeV //GeV --> 10 MeV
     const Double_t tofmax = 1.e1; // seconds
 
     MC->SetCut("CUTGAM", cut1);   /** gammas (GeV)*/
@@ -57,17 +57,5 @@ void SetCuts()
     MC->SetCut("DCUTM", cut2);    /** delta-rays by muons (GeV)*/
     MC->SetCut("PPCUTM", cut2);   /** direct pair production by muons (GeV)*/
     MC->SetCut("TOFMAX", tofmax); /**time of flight cut in seconds*/
-
-    //MC->SetCut("CUTGAM", cut1);   /** gammas (GeV)*/
-    //MC->SetCut("CUTELE", cut1);   /** electrons (GeV)*/
-    //MC->SetCut("CUTNEU", cut1);   /** neutral hadrons (GeV)*/
-    //MC->SetCut("CUTHAD", cut1);   /** charged hadrons (GeV)*/
-    //MC->SetCut("CUTMUO", cut1);   /** muons (GeV)*/
-    //MC->SetCut("BCUTE", cut1);    /** electron bremsstrahlung (GeV)*/
-    //MC->SetCut("BCUTM", cut1);    /** muon and hadron bremsstrahlung(GeV)*/
-    //MC->SetCut("DCUTE", cut1);    /** delta-rays by electrons (GeV)*/
-    //MC->SetCut("DCUTM", cut1);    /** delta-rays by muons (GeV)*/
-    //MC->SetCut("PPCUTM", cut1);   /** direct pair production by muons (GeV)*/
-    //MC->SetCut("TOFMAX", tofmax); /**time of flight cut in seconds*/
 
 }

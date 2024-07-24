@@ -85,12 +85,12 @@ auto main(int argc, const char** argv) -> int
     // settings:
     auto tamexParameter = Digitizing::Neuland::Tamex::Params{ TamexChannel::GetDefaultRandomGen() };
     // here choose the PileUp strategy: width, distance or time_window
-    auto pileup_strategy = Digitizing::Neuland::Tamex::PeakPileUpStrategy::distance;
-    tamexParameter.fPMTThresh = 0.3;
-    //tamexParameter.fTimeMin = 1.;
+    auto pileup_strategy = Digitizing::Neuland::Tamex::PeakPileUpStrategy::width;
+    tamexParameter.fPMTThresh = 1.2;
+    //tamexParameter.fQdcMin = 0.6;
     //tamexParameter.fPedestal = 0.;
     //tamexParameter.fEnergyGain = 20.;
-    tamexParameter.fSaturationCoefficient= 0.012;
+    tamexParameter.fSaturationCoefficient= 0.;
     tamexParameter.fExperimentalDataIsCorrectedForSaturation = kTRUE;
 
     const auto neulandEngines = std::map<std::pair<const std::string, const std::string>,

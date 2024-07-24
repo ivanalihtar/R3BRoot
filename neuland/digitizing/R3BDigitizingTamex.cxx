@@ -110,12 +110,6 @@ namespace R3B::Digitizing::Neuland::Tamex
         trailing_edge_time_ =
             (trailing_edge_time_ > other.trailing_edge_time_) ? trailing_edge_time_ : other.trailing_edge_time_;
         width_ = trailing_edge_time_ - leading_edge_time_;
-        //LOG(info) << "Width is = " << width_;
-        std::cout << "Width is = " << width_ << std::endl;
-        // begin - Ivana
-        // non-linearity that we see in TAMEX electronics in ToT vs charge
-        if (width_ > 460.) width_ = (width_-437.38)/1.15;
-        // end - Ivana
         qdc_ = WidthToQdc(width_, channel_ptr_->GetParConstRef());
     }
 
@@ -425,6 +419,19 @@ namespace R3B::Digitizing::Neuland::Tamex
             qdc = qdc / (1 - par_.fSaturationCoefficient * qdc);
         }
         // Apply reverse attenuation
+        //const auto& par = channel->GetParConstRef();
+        //auto width_final =  QdcToWidth(qdc, par);
+        /*auto width_final =  NAN;
+        auto qdc_final = NAN;
+        if (qdc < 32.2) width_final = 17.2+14.5*qdc;
+        else width_final = 438.39+1.17*qdc;
+        //if (width_final>470) qdc_final = (width_final-437.38)/1.15;
+        if (width_final<550.)
+        qdc_final = (width_final-17.2)/14.5;
+        if (par_.fExperimentalDataIsCorrectedForSaturation)
+        {
+            qdc_final = qdc_final / (1 - par_.fSaturationCoefficient * qdc_final);
+        }*/
         return qdc;
     }
 } // namespace R3B::Digitizing::Neuland::Tamex
